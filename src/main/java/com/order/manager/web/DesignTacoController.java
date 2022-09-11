@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/design")
 public class DesignTacoController {
 
-    @GetMapping("/")
+    @GetMapping
     public String showDesignForm(Model model){
         List<Ingredient> ingredients = Arrays.asList(
                 new Ingredient("FLTO", "Flour Tortilla", Ingredient.Type.WRAP),
@@ -42,14 +42,14 @@ public class DesignTacoController {
                     filterByType(ingredients, type));
         }
 
-        model.addAttribute("design", new Taco());
+        model.addAttribute("design", new Taco());//will be extracted in design.html and used as post request object
         return "design";
     }
 
-    @PostMapping("/")
+    @PostMapping
     public String processDesign(@Valid Taco tacoDesign,
                                 Errors bindingErrors){//if there are binding errors, including
-                                                      //validation error, the errors will be catched
+                                                      //validation error, the errors will be caught
                                                       //and saved into the bindingErrors
 
         if(bindingErrors.hasErrors()){

@@ -32,7 +32,7 @@ dependencies {
 	//devtools
 	implementation("org.springframework.boot:spring-boot-devtools")
 
-	//validation annotation
+	//validation annotation like @Valid @NotNull @BotBlank @Pattern @Digits
 	implementation("org.hibernate.validator:hibernate-validator")
 
 	//  junit for @RunWith

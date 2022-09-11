@@ -24,7 +24,7 @@ public class OrderController {
         return "orderForm";
     }
 
-    @PostMapping("/")
+    @PostMapping
     public String processOrder(@Valid Order order,
                                Errors bindingErrors){
         if(bindingErrors.hasErrors()){
