@@ -1,18 +1,28 @@
 package com.order.manager.web;
 
 import com.order.manager.model.Ingredient;
+import com.order.manager.model.Order;
 import com.order.manager.model.Taco;
+import com.order.manager.repository.interfaces.IngredientRepository;
+import com.order.manager.repository.interfaces.TacoRepository;
+
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.validation.Valid;
-import java.util.Arrays;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,42 +30,64 @@ import java.util.stream.Collectors;
 @Data
 @Controller
 @RequestMapping("/design")
+@SessionAttributes({"order", "ingredients"})//make sure order can be used in multiple requests, to get multiple Tacos
 public class DesignTacoController {
+    @Autowired
+    private IngredientRepository ingredientRepository;
+
+    @Autowired
+    private TacoRepository tacoRepository;
+
+    //make sure that there is an Order be set to Model, which is to be extracted by HTML code
+    @ModelAttribute(name = "order")
+    public Order order() {
+        return new Order();
+    }
+
+    //make sure that there is an Taco be set to Model, which is to be extracted by HTML code
+    @ModelAttribute(name = "taco")
+    public Taco taco() {
+        return new Taco();
+    }
+
+    @ModelAttribute(name = "ingredients")
+    public ArrayList<Ingredient> ingredients() {
+        return new ArrayList<>();
+    }
 
     @GetMapping
     public String showDesignForm(Model model){
-        List<Ingredient> ingredients = Arrays.asList(
-                new Ingredient("FLTO", "Flour Tortilla", Ingredient.Type.WRAP),
-                new Ingredient("COTO", "Corn Tortilla", Ingredient.Type.WRAP),
-                new Ingredient("GRBF", "Ground Beef", Ingredient.Type.PROTEIN),
-                new Ingredient("CARN", "Carnitas", Ingredient.Type.PROTEIN),
-                new Ingredient("TMTO", "Diced Tomatoes", Ingredient.Type.VEGGIES),
-                new Ingredient("LETC", "Lettuce", Ingredient.Type.VEGGIES),
-                new Ingredient("CHED", "Cheddar", Ingredient.Type.CHEESE),
-                new Ingredient("JACK", "Monterrey Jack", Ingredient.Type.CHEESE),
-                new Ingredient("SLSA", "Salsa", Ingredient.Type.SAUCE),
-                new Ingredient("SRCR", "Sour Cream", Ingredient.Type.SAUCE)
-        );
-        Ingredient.Type[] types = Ingredient.Type.values();
-        for (Ingredient.Type type : types) {
-            model.addAttribute(type.toString().toLowerCase(),
-                    filterByType(ingredients, type));
-        }
+        List<Ingredient> ingredients = new ArrayList<>();
+        ingredientRepository.findAll().forEach(ingredients::add);
 
-        model.addAttribute("design", new Taco());//will be extracted in design.html and used as post request object
+        categorizeIngredientsByTypeAndAddToModel(ingredients, model);
+
+        /*add ingredients to model, which is used to reproduce ingredients
+         *when encountered bindingErrors in processDesign method */
+        model.addAttribute("ingredients", ingredients);
+
         return "design";
     }
 
     @PostMapping
     public String processDesign(@Valid Taco tacoDesign,
-                                Errors bindingErrors){//if there are binding errors, including
-                                                      //validation error, the errors will be caught
-                                                      //and saved into the bindingErrors
+                                Errors bindingErrors,
+                                @ModelAttribute Order order,
+                                Model model){/*if there are binding errors, including
+                                              *validation error, the errors will be caught
+                                              *and saved into the bindingErrors*/
 
         if(bindingErrors.hasErrors()){
+            @SuppressWarnings ("unchecked")
+            List<Ingredient> ingredients = (List<Ingredient>) model.getAttribute("ingredients");
+            categorizeIngredientsByTypeAndAddToModel(ingredients, model);
             return "design";
         }
-        log.info("Processing design: " + tacoDesign);
+
+        Taco saved = tacoRepository.save(tacoDesign);
+        order.addDesign(saved);
+        log.info("process taco design finished, Taco saved");
+
         return "redirect:/orders/current";
     }
 
@@ -65,5 +97,13 @@ public class DesignTacoController {
                 .stream()
                 .filter(x -> x.getType().equals(type))
                 .collect(Collectors.toList());
+    }
+
+    private void categorizeIngredientsByTypeAndAddToModel(List<Ingredient> ingredients, Model model){
+        Ingredient.Type[] types = Ingredient.Type.values();
+        for (Ingredient.Type type : types) {
+            model.addAttribute(type.toString().toLowerCase(),
+                  filterByType(ingredients, type));
+        }
     }
 }

@@ -1,14 +1,16 @@
 package com.order.manager.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 
 @Data
-@AllArgsConstructor
+@NoArgsConstructor
+//@RequiredArgsConstructor
 public class Ingredient {
-    private final String id;
-    private final String name;
-    private final Type type;
+    private String id;
+    private String name;
+    private Type type;
 
     public static enum Type{
         WRAP, PROTEIN, VEGGIES, CHEESE, SAUCE

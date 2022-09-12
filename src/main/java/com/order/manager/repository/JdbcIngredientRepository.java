@@ -1,10 +1,11 @@
 package com.order.manager.repository;
 
 import com.order.manager.model.Ingredient;
+import com.order.manager.repository.interfaces.IngredientRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -12,7 +13,8 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 @Repository
-public class IngredientJDBCRepositoryImpl implements IngredientJDBCRepository {
+public class JdbcIngredientRepository implements IngredientRepository
+{
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -20,7 +22,8 @@ public class IngredientJDBCRepositoryImpl implements IngredientJDBCRepository {
     public Iterable<Ingredient> findAll() {//if write List<Ingredient> the query result will be a lIst
         String orderQuerySql = "select * from INGREDIENT";
 
-        //jdbcTemplate.query(orderQuerySql,this::mapRowToIngredient) also valid
+        /**jdbcTemplate.query(orderQuerySql,this::mapRowToIngredient) also valid*/
+
         /**jdbcTemplate.query(orderQuerySql, new RowMapper<Ingredient>() {
             public Ingredient mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new Ingredient(rs.getString("id"), rs.getString("name"),
@@ -60,8 +63,9 @@ public class IngredientJDBCRepositoryImpl implements IngredientJDBCRepository {
         return ingredient;
     }
 
-    private Ingredient mapRowToIngredient(ResultSet rs, int rowNum) throws SQLException {
-        return new Ingredient(rs.getString("id"), rs.getString("name"),
-            Ingredient.Type.valueOf(rs.getString("type")));
-    }
+//    //this method can be used to replace "new BeanPropertyRowMapper<>(Ingredient.class)"
+//    private Ingredient mapRowToIngredient(ResultSet rs, int rowNum) throws SQLException {
+//        return new Ingredient(rs.getString("id"), rs.getString("name"),
+//            Ingredient.Type.valueOf(rs.getString("type")));
+//    }
 }

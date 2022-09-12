@@ -1,10 +1,10 @@
-package com.order.manager.repository;
+package com.order.manager.repository.interfaces;
 
 import com.order.manager.model.Ingredient;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface IngredientJDBCRepository {
+public interface IngredientRepository
+{
     Iterable<Ingredient> findAll();
 
     Ingredient findById(String id);
