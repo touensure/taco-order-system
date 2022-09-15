@@ -1,3 +1,4 @@
+--table name and it's dields would better to use "xx_xx_xx" pattern
 create table if not exists Ingredient (
     id varchar(25) primary key,
     name varchar(25) not null,
@@ -6,17 +7,10 @@ create table if not exists Ingredient (
 
 create table if not exists Taco(
     id varchar(25) primary key,
+    orderId varchar(25) not null,
     name varchar(50) not null,
     createdAt timestamp not null
 );
-
-create table if not exists Taco_Ingredients(
-    tacoId varchar(25) not null,
-    ingredientId varchar(25) not null
-);
-
-alter table Taco_Ingredients add constraint taco_id_foreign_key foreign key(tacoId) references Taco(id);
-alter table Taco_Ingredients add constraint ingredient_id_foreign_key foreign key(ingredientId) references Ingredient(id);
 
 create table if not exists Taco_Order(
     id varchar(25) primary key,
@@ -31,11 +25,7 @@ create table if not exists Taco_Order(
     placedAt timestamp not null
 );
 
-create table if not exists Taco_Order_Tacos(
-    tacoOrderId varchar(25) not null,
-    tacoId varchar(25) not null
+create table if not exists Taco_Ingredients(
+    taco_Id varchar(25) not null,
+    ingredients_Id varchar(25) not null
 );
-
-alter table Taco_Order_Tacos add constraint tacoOrder_id_foreign_key foreign key(tacoOrderId) references Taco_Order(id);
-alter table Taco_Order_Tacos add constraint taco_id_foreign_key foreign key(tacoId) references Taco(id);
-

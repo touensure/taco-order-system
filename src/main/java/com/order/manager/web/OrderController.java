@@ -1,7 +1,7 @@
 package com.order.manager.web;
 
 import com.order.manager.model.Order;
-import com.order.manager.repository.interfaces.OrderRepository;
+import com.order.manager.repository.OrderRepository;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +43,7 @@ public class OrderController {
 
         orderRepository.save(order);
         sessionStatus.setComplete();
-        log.info("Order submitted" + order);
+        log.info("Order: " + order.getId() + " submitted");
 
         return "redirect:/";
     }

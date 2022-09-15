@@ -3,14 +3,14 @@ package com.order.manager.web;
 import com.order.manager.model.Ingredient;
 import com.order.manager.model.Order;
 import com.order.manager.model.Taco;
-import com.order.manager.repository.interfaces.IngredientRepository;
-import com.order.manager.repository.interfaces.TacoRepository;
+import com.order.manager.repository.IngredientRepository;
+import com.order.manager.repository.OrderRepository;
+import com.order.manager.repository.TacoRepository;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -37,6 +37,9 @@ public class DesignTacoController {
 
     @Autowired
     private TacoRepository tacoRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     //make sure that there is an Order be set to Model, which is to be extracted by HTML code
     @ModelAttribute(name = "order")
@@ -84,8 +87,9 @@ public class DesignTacoController {
             return "design";
         }
 
-        Taco saved = tacoRepository.save(tacoDesign);
-        order.addDesign(saved);
+//        Taco saved = tacoRepository.save(tacoDesign);
+        order.addDesign(tacoDesign);
+        tacoDesign.setTacoOrder(order);
         log.info("process taco design finished, Taco saved");
 
         return "redirect:/orders/current";
