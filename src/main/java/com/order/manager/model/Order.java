@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -23,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.order.manager.config.security.User;
 
 
 @Data
@@ -100,6 +103,10 @@ public class Order {
     @Size(min=1, message = "You must choose at least 1 ingredient")
 //    @JsonManagedReference("tacos")
     private List<Taco> tacos = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId")
+    private User user;
 
     public void addDesign(Taco design) {
         this.tacos.add(design);

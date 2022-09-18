@@ -49,6 +49,9 @@ dependencies {
 	implementation 'org.postgresql:postgresql'
 	runtimeOnly 'org.postgresql:postgresql'
 
+	//spring security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
 //	//add flyway to manage database sql files
 //	implementation 'org.flywaydb:flyway-core'
 

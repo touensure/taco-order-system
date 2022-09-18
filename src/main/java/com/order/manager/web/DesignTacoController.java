@@ -1,5 +1,6 @@
 package com.order.manager.web;
 
+import com.order.manager.config.security.User;
 import com.order.manager.model.Ingredient;
 import com.order.manager.model.Order;
 import com.order.manager.model.Taco;
@@ -11,6 +12,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.validation.Valid;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,7 +62,7 @@ public class DesignTacoController {
     }
 
     @GetMapping
-    public String showDesignForm(Model model){
+    public String showDesignForm(Model model, @AuthenticationPrincipal User user){
         List<Ingredient> ingredients = new ArrayList<>();
         ingredientRepository.findAll().forEach(ingredients::add);
 
@@ -68,6 +71,7 @@ public class DesignTacoController {
         /*add ingredients to model, which is used to reproduce ingredients
          *when encountered bindingErrors in processDesign method */
         model.addAttribute("ingredients", ingredients);
+        model.addAttribute("user", user);
 
         return "design";
     }

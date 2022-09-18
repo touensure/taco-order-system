@@ -9,5 +9,16 @@
 <h1>Welcome to...</h1>
 <img th:src="@{/images/TacoCloud.png}"/>
 <!--<img src="../static/images/TacoCloud.png"/>-->
+<form method="GET" th:action="@{/login}">
+    <input type="submit" value="Login"/>
+</form>
+<form method="GET" th:action="@{/register}">
+    <input type="submit" value="Register"/>
+</form>
+<form method="POST" th:action="@{/logout}" id="logoutForm">
+    <input type="submit" value="Logout"/>
+</form>
+
+<a th:href="@{/design}" id="design">Design a taco</a>
 </body>
 </html>
