@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(HomeController.class) // <1>
+@WebMvcTest(WebConfigController.class) // <1>
 public class HomeControllerTest {
 
     @Autowired

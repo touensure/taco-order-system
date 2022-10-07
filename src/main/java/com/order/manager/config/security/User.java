@@ -57,7 +57,7 @@ public class User implements UserDetails {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true, fetch = FetchType.EAGER)
 	private List<Order> tacoOrders = new ArrayList<>();
 
-	protected User(final String username, final String password, final String fullName, final String street, final String city,
+	public User(final String username, final String password, final String fullName, final String street, final String city,
 			final String state, final String zip, final String phoneNumber) {
 		this.username = username;
 		this.password = password;

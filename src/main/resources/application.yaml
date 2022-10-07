@@ -1,0 +1,35 @@
+server:
+  port: 8081
+spring:
+  application.name: Taco-Order-System
+  #database related settings combine with dependency of database in build.gradle, then finish DB config
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres?useSSL=false
+    username: postgres
+    password: postgres
+#    initialization-mode: always #https://www.baeldung.com/spring-boot-data-sql-and-schema-sql,
+                                #https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.7.0-Configuration-Changelog, use spring.sql.init.mode:always instead
+  sql.init.mode: always
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate.ddl-auto: update
+  #disablethe thymeleaf cache, and when you do some revision to HTML file, just refresh the page from brower, the revision will get reflected
+  #but on production env, make sure to set it to true, so the brower can save time when get refreshed.
+  thymeleaf:
+    cache: false
+logging:
+  path: /var/log/
+  file: TacoCloud.log
+  level.org.hibernate.type.descriptor.sql: trace
+greeting:
+  welcome: You are using ${spring.application.name}.
+taco:
+  orders:
+    page-size: 10
+---
+spring:
+  profiles: dev
+server:
+  port: 8082

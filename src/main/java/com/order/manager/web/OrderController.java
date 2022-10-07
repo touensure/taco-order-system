@@ -1,5 +1,6 @@
 package com.order.manager.web;
 
+import com.order.manager.config.OrderProps;
 import com.order.manager.config.security.User;
 import com.order.manager.config.security.UserRepository;
 import com.order.manager.model.Order;
@@ -9,6 +10,9 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,10 +31,17 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/orders")
 @SessionAttributes("order")
+@ConfigurationProperties(prefix = "taco.orders")
 public class OrderController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderProps orderProps;
 
     @GetMapping("/current")
     public String orderForm(Model model,
@@ -73,5 +84,16 @@ public class OrderController {
         log.info("Order: " + order.getId() + " submitted");
 
         return "redirect:/";
+    }
+
+    @GetMapping
+    public String ordersForUser(@AuthenticationPrincipal User user,
+                                Model model) {
+
+        Pageable pageable = PageRequest.of(0, orderProps.getPageSize());
+        model.addAttribute("orders",
+              orderRepository.findByUserOrderByPlacedAtDesc(user, pageable));
+
+        return "orderList";
     }
 }
